@@ -32,7 +32,7 @@
               <a :href="data.item.home" target="blank">{{data.value}}</a>
             </template>
             <template slot="tags" slot-scope="data">
-              <b-badge variant="primary" class="tagbadge"  v-for="tag in data.value" v-bind:key="tag">
+              <b-badge variant="primary" @click="filterTag(tag)" class="tagbadge" v-for="tag in data.value" v-bind:key="tag">
                 {{tag}}
               </b-badge>
             </template>
@@ -126,6 +126,9 @@ export default {
     },
     toggleAllTag (checked) {
       this.selectedTags = checked ? this.tags : []
+    },
+    filterTag (tag) {
+      this.selectedTags = [ tag ]
     }
   },
   data () {
@@ -161,14 +164,6 @@ export default {
 <style scoped>
 h1, h2 {
   font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
 }
 a {
   color: #42b983;
