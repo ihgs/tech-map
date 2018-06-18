@@ -26,7 +26,16 @@
       </b-row>
       <b-row>
         <b-col>
-          <b-table striped hover :fields="fields" :items="displayData">
+          <h4 align="left">Display data: {{displayData.length}}</h4>
+          <b-table striped hover :fields="fields" :items="displayData" class="data-table">
+            <template slot="name" slot-scope="data">
+              <a :href="data.item.home" target="blank">{{data.value}}</a>
+            </template>
+            <template slot="tags" slot-scope="data">
+              <b-badge variant="primary" class="tagbadge"  v-for="tag in data.value" v-bind:key="tag">
+                {{tag}}
+              </b-badge>
+            </template>
             <template slot="home" slot-scope="data">
               <b-link :href="data.value" target="blank" v-if="data.value !== undefined">Home</b-link>
             </template>
@@ -75,7 +84,7 @@ export default {
         dataA.push({
           name: value,
           lang: tecData.lang.join(', '),
-          tags: tecData.tags.join(', '),
+          tags: tecData.tags,
           home: tecData.homepage,
           refs: tecData.refs
         })
@@ -140,9 +149,6 @@ export default {
           key: 'tags'
         },
         {
-          key: 'home'
-        },
-        {
           key: 'refs'
         }
       ]
@@ -166,6 +172,10 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.tagbadge {
+  margin: 2px;
 }
 
 </style>
