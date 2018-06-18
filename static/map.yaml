@@ -22,6 +22,7 @@ map:
       - java
     tags:
       - test
+      - web api
     created: 2018/06/16
     homepage: https://github.com/intuit/karate
     refs: 
@@ -30,5 +31,32 @@ map:
     lang:
       - java
     tags:
-      - coverage
+      - code coverage
     homepage: https://www.eclemma.org/jacoco/
+  Junit:
+    lang:
+      - java
+    tags:
+      - test
+      - unittest
+    created: 2018/06/18
+  pip: 
+    lang:
+      - python
+    tags:
+      - package manager
+    homepage: https://pip.pypa.io/en/stable/#
+  Pipenv:
+    lang:
+      - python
+    tags:
+      - package manager
+      - task runner
+  tox:
+    lang:
+      - python
+    tags:
+      - test
+    created: 2018/06/18
+    homepage: http://tox.readthedocs.io/en/latest/
+    

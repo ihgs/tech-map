@@ -5,6 +5,9 @@
       <b-row>
         <b-col>
           <b-form-group label="Lang" align="left">
+            <b-form-checkbox v-model="allSelectedLang" @change="toggleAllLang">
+              {{ allSelectedLang ? 'Un-select All': 'Select All'}}
+            </b-form-checkbox>
             <b-form-checkbox-group v-model="selectedLangs" :options="langs">
             </b-form-checkbox-group>
           </b-form-group>
@@ -13,6 +16,9 @@
       <b-row>
         <b-col>
           <b-form-group label="Tag" align="left">
+            <b-form-checkbox v-model="allSelectedTag" @change="toggleAllTag">
+              {{ allSelectedTag ? 'Un-select All': 'Select All'}}
+            </b-form-checkbox>
             <b-form-checkbox-group button-variant="primary" v-model="selectedTags" :options="tags">
             </b-form-checkbox-group>
           </b-form-group>
@@ -22,7 +28,7 @@
         <b-col>
           <b-table striped hover :fields="fields" :items="displayData">
             <template slot="home" slot-scope="data">
-              <b-link :href="data.value" target="blank">Home</b-link>
+              <b-link :href="data.value" target="blank" v-if="data.value !== undefined">Home</b-link>
             </template>
           </b-table>
         </b-col>
@@ -105,8 +111,18 @@ export default {
     })
   },
   name: 'ShowMap',
+  methods: {
+    toggleAllLang (checked) {
+      this.selectedLangs = checked ? this.langs : []
+    },
+    toggleAllTag (checked) {
+      this.selectedTags = checked ? this.tags : []
+    }
+  },
   data () {
     return {
+      allSelectedLang: true,
+      allSelectedTag: true,
       selectedLangs: [],
       selectedTags: [],
       mapData: [],
