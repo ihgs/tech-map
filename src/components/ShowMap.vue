@@ -5,7 +5,7 @@
       <b-row>
         <b-col>
           <b-form-group label="Lang" align="left">
-            <b-form-checkbox v-model="allSelectedLang" @change="toggleAllLang">
+            <b-form-checkbox v-model="allSelectedLang" :indeterminate="langInterminate" @change="toggleAllLang">
               {{ allSelectedLang ? 'Un-select All': 'Select All'}}
             </b-form-checkbox>
             <b-form-checkbox-group v-model="selectedLangs" :options="langs">
@@ -16,7 +16,7 @@
       <b-row>
         <b-col>
           <b-form-group label="Tag" align="left">
-            <b-form-checkbox v-model="allSelectedTag" @change="toggleAllTag">
+            <b-form-checkbox v-model="allSelectedTag" :indeterminate="tagInterminate" @change="toggleAllTag">
               {{ allSelectedTag ? 'Un-select All': 'Select All'}}
             </b-form-checkbox>
             <b-form-checkbox-group button-variant="primary" v-model="selectedTags" :options="tags">
@@ -131,9 +131,39 @@ export default {
       this.selectedTags = [ tag ]
     }
   },
+  watch: {
+    selectedLangs: function () {
+      if (this.selectedLangs !== undefined) {
+        if (this.selectedLangs.length === 0) {
+          this.langInterminate = false
+          this.allSelectedLang = false
+        } else if (this.selectedLangs.length < this.langs.length) {
+          this.langInterminate = true
+          this.allSelectedLang = false
+        } else {
+          this.langInterminate = false
+        }
+      }
+    },
+    selectedTags: function () {
+      if (this.selectedTags !== undefined) {
+        if (this.selectedTags.length === 0) {
+          this.tagInterminate = false
+          this.allSelectedTag = false
+        } else if (this.selectedTags.length < this.tags.length) {
+          this.tagInterminate = true
+          this.allSelectedTag = false
+        } else {
+          this.tagInterminate = false
+        }
+      }
+    }
+  },
   data () {
     return {
+      langInterminate: false,
       allSelectedLang: true,
+      tagInterminate: false,
       allSelectedTag: true,
       selectedLangs: [],
       selectedTags: [],
