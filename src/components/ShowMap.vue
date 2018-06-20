@@ -94,7 +94,7 @@ export default {
   },
   mounted: function () {
     var that = this
-    const url = '/static/map.yaml'
+    const url = './static/map.yaml'
     axios.get(url).then(function (response) {
       that.mapData = YAML.parse(response.data)
       const langSet = new Set()
