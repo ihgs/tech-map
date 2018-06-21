@@ -5,8 +5,8 @@
       <b-row>
         <b-col>
           <b-form-group label="Lang" align="left">
-            <b-form-checkbox v-model="allSelectedLang" :indeterminate="langInterminate" @change="toggleAllLang">
-              {{ allSelectedLang ? 'Un-select All': 'Select All'}}
+            <b-form-checkbox v-model="lang.allSelected" :indeterminate="lang.interminate" @change="toggleAllLang">
+              {{ lang.allSelected ? 'Un-select All': 'Select All'}}
             </b-form-checkbox>
             <b-form-checkbox-group v-model="selectedLangs" :options="langs">
             </b-form-checkbox-group>
@@ -16,8 +16,8 @@
       <b-row>
         <b-col>
           <b-form-group label="Tag" align="left">
-            <b-form-checkbox v-model="allSelectedTag" :indeterminate="tagInterminate" @change="toggleAllTag">
-              {{ allSelectedTag ? 'Un-select All': 'Select All'}}
+            <b-form-checkbox v-model="tag.allSelected" :indeterminate="tag.interminate" @change="toggleAllTag">
+              {{ tag.allSelected ? 'Un-select All': 'Select All'}}
             </b-form-checkbox>
             <b-form-checkbox-group button-variant="primary" v-model="selectedTags" :options="tags">
             </b-form-checkbox-group>
@@ -60,25 +60,19 @@ export default {
         const tecData = this.mapData.map[value]
         const langs = tecData.lang
         const tags = tecData.tags
-        if (langs === undefined) {
+        if (langs === undefined || tags === undefined) {
           continue
         }
-        let targetFlag = false
-        langs.forEach(value => {
-          if (this.selectedLangs.includes(value)) {
-            targetFlag = true
-          }
+        const matchLang = langs.filter(v => {
+          return this.selectedLangs.indexOf(v) !== -1
         })
-        if (!targetFlag) {
+        if (matchLang.length === 0) {
           continue
         }
-        targetFlag = false
-        tags.forEach(value => {
-          if (this.selectedTags.includes(value)) {
-            targetFlag = true
-          }
+        const matchTag = tags.filter(v => {
+          return this.selectedTags.indexOf(v) !== -1
         })
-        if (!targetFlag) {
+        if (matchTag.length === 0) {
           continue
         }
         dataA.push({
@@ -93,30 +87,30 @@ export default {
     }
   },
   mounted: function () {
-    var that = this
+    const that = this
     const url = './static/map.yaml'
     axios.get(url).then(function (response) {
       that.mapData = YAML.parse(response.data)
-      const langSet = new Set()
-      const tagSet = new Set()
       for (let value in that.mapData.map) {
         const langs = that.mapData.map[value].lang
         if (langs !== undefined) {
           langs.forEach(value => {
-            langSet.add(value)
+            if (!that.langs.includes(value)) {
+              that.langs.push(value)
+              that.selectedLangs.push(value)
+            }
           })
         }
         const tags = that.mapData.map[value].tags
         if (tags !== undefined) {
           tags.forEach(value => {
-            tagSet.add(value)
+            if (!that.tags.includes(value)) {
+              that.tags.push(value)
+              that.selectedTags.push(value)
+            }
           })
         }
       }
-      that.selectedLangs = Array.from(langSet)
-      that.langs = Array.from(langSet)
-      that.selectedTags = Array.from(tagSet)
-      that.tags = Array.from(tagSet)
     })
   },
   name: 'ShowMap',
@@ -135,24 +129,24 @@ export default {
     selectedLangs: function () {
       if (this.selectedLangs !== undefined) {
         if (this.selectedLangs.length === 0) {
-          this.langInterminate = false
-          this.allSelectedLang = false
+          this.lang.interminate = false
+          this.lang.allSelected = false
         } else if (this.selectedLangs.length < this.langs.length) {
-          this.langInterminate = true
-          this.allSelectedLang = false
+          this.lang.interminate = true
+          this.lang.allSelected = false
         } else {
-          this.langInterminate = false
+          this.lang.interminate = false
         }
       }
     },
     selectedTags: function () {
       if (this.selectedTags !== undefined) {
         if (this.selectedTags.length === 0) {
-          this.tagInterminate = false
-          this.allSelectedTag = false
+          this.tag.interminate = false
+          this.tag.allSelected = false
         } else if (this.selectedTags.length < this.tags.length) {
-          this.tagInterminate = true
-          this.allSelectedTag = false
+          this.tag.interminate = true
+          this.tag.allSelected = false
         } else {
           this.tagInterminate = false
         }
@@ -161,10 +155,14 @@ export default {
   },
   data () {
     return {
-      langInterminate: false,
-      allSelectedLang: true,
-      tagInterminate: false,
-      allSelectedTag: true,
+      lang: {
+        interminate: false,
+        allSelected: true
+      },
+      tag: {
+        interminate: false,
+        allSelected: true
+      },
       selectedLangs: [],
       selectedTags: [],
       mapData: [],
