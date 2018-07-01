@@ -49,6 +49,7 @@
 <script>
 import axios from 'axios'
 const YAML = require('yamljs')
+
 export default {
   computed: {
     displayData: function () {
@@ -123,34 +124,27 @@ export default {
     },
     filterTag (tag) {
       this.selectedTags = [ tag ]
+    },
+    handleCheckBox (selected, options, checkbox) {
+      if (selected !== undefined) {
+        if (selected.length === 0) {
+          checkbox.interminate = false
+          checkbox.allSelected = false
+        } else if (selected.length < options.length) {
+          checkbox.interminate = true
+          checkbox.allSelected = false
+        } else {
+          checkbox.interminate = false
+        }
+      }
     }
   },
   watch: {
     selectedLangs: function () {
-      if (this.selectedLangs !== undefined) {
-        if (this.selectedLangs.length === 0) {
-          this.lang.interminate = false
-          this.lang.allSelected = false
-        } else if (this.selectedLangs.length < this.langs.length) {
-          this.lang.interminate = true
-          this.lang.allSelected = false
-        } else {
-          this.lang.interminate = false
-        }
-      }
+      this.handleCheckBox(this.selectedLangs, this.langs, this.lang)
     },
     selectedTags: function () {
-      if (this.selectedTags !== undefined) {
-        if (this.selectedTags.length === 0) {
-          this.tag.interminate = false
-          this.tag.allSelected = false
-        } else if (this.selectedTags.length < this.tags.length) {
-          this.tag.interminate = true
-          this.tag.allSelected = false
-        } else {
-          this.tagInterminate = false
-        }
-      }
+      this.handleCheckBox(this.selectedTags, this.tags, this.tag)
     }
   },
   data () {
