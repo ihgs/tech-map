@@ -47,72 +47,32 @@
 </template>
 
 <script>
-import axios from 'axios'
-const YAML = require('yamljs')
+import techMapStore from '../store/techMapStore'
 
 export default {
   computed: {
+    selectedLangs: {
+      get () {
+        return techMapStore.state.selectedLangs
+      },
+      set (value) {
+        techMapStore.commit('SET_SELECTED_LANGS', value)
+      }
+    },
+    selectedTags: {
+      get () {
+        return techMapStore.state.selectedTags
+      },
+      set (value) {
+        techMapStore.commit('SET_SELECTED_TAGS', value)
+      }
+    },
     displayData: function () {
-      if (this.mapData === undefined || this.mapData.map === undefined) {
-        return []
-      }
-      const dataA = []
-      for (let value in this.mapData.map) {
-        const tecData = this.mapData.map[value]
-        const langs = tecData.lang
-        const tags = tecData.tags
-        if (langs === undefined || tags === undefined) {
-          continue
-        }
-        const matchLang = langs.filter(v => {
-          return this.selectedLangs.indexOf(v) !== -1
-        })
-        if (matchLang.length === 0) {
-          continue
-        }
-        const matchTag = tags.filter(v => {
-          return this.selectedTags.indexOf(v) !== -1
-        })
-        if (matchTag.length === 0) {
-          continue
-        }
-        dataA.push({
-          name: value,
-          lang: tecData.lang.join(', '),
-          tags: tecData.tags,
-          home: tecData.homepage,
-          refs: tecData.refs
-        })
-      }
-      return dataA
+      return techMapStore.getters.displayData
     }
   },
   mounted: function () {
-    const that = this
-    const url = './static/map.yaml'
-    axios.get(url).then(function (response) {
-      that.mapData = YAML.parse(response.data)
-      for (let value in that.mapData.map) {
-        const langs = that.mapData.map[value].lang
-        if (langs !== undefined) {
-          langs.forEach(value => {
-            if (!that.langs.includes(value)) {
-              that.langs.push(value)
-              that.selectedLangs.push(value)
-            }
-          })
-        }
-        const tags = that.mapData.map[value].tags
-        if (tags !== undefined) {
-          tags.forEach(value => {
-            if (!that.tags.includes(value)) {
-              that.tags.push(value)
-              that.selectedTags.push(value)
-            }
-          })
-        }
-      }
-    })
+    techMapStore.dispatch('init')
   },
   name: 'ShowMap',
   methods: {
@@ -157,11 +117,8 @@ export default {
         interminate: false,
         allSelected: true
       },
-      selectedLangs: [],
-      selectedTags: [],
-      mapData: [],
-      langs: [],
-      tags: [],
+      langs: techMapStore.state.langs,
+      tags: techMapStore.state.tags,
       fields: [
         {
           key: 'name',
